@@ -1,25 +1,3 @@
-// describe('My First Test', () => {
-//     it('Gets, types and asserts', () => {
-//         cy.visit('https://example.cypress.io')
-
-//         cy.contains('type').click()
-
-//         // Should be on a new URL which includes '/commands/actions'
-//         cy.url().should('include', '/commands/actions')
-
-//         // Get an input, type into it and verify that the value has been updated
-//         cy.get('.action-email')
-//             .type('fake@email.com')
-//             .should('have.value', 'fake@email.com')
-//     })
-// })
-// describe('The Home Page', () => {
-//     it('successfully loads', () => {
-//         cy.visit('/') // change URL to match your dev URL
-//     })
-// })
-
-
 //------------------------------------------------------SignUp------------------------------------------------------------
 //As a new user I want to register by creating a user name 
 //and password so that system can remember me and my data.
@@ -32,19 +10,75 @@ describe('The Sign Up page', () => {
         cy.get('input[name=username]').type(username)
 
         // {enter} causes the form to submit
-        cy.get('input[name=password]').type(`${password}{enter}`)
+        cy.get('input[name=password]').type(`${password}`)
 
         cy.get('input[value=Submit]').click();
 
-        // we should be redirected to /dashboard
+        // we should be redirected to /login
         cy.url().should('include', '/login')
 
-        //   // our auth cookie should be present
-        //   cy.getCookie('your-session-cookie').should('exist')
+        // UI should reflect this user being logged in
+        cy.get('title').should('contain', 'Bus Booking App')
+    })
+
+    //////sequential execution 
+    it('Login Successful', function(username, password) {
+
+        ////cy.visit('/login')
+
+        cy.get('input[name=username]').type(username)
+
+
+        cy.get('input[name=password]').type(`${password}`)
+            // causes the form to submit
+        cy.get('input[value=Submit]').click();
+
+        // we should be redirected to /dashboard
+        cy.url().should('include', '/dashboard')
+            //   cy.getCookie('your-session-cookie').should('exist')
 
         // UI should reflect this user being logged in
-        cy.get('title').should('contain', 'Testing App')
+        cy.get('title').should('contain', 'Bus Booking App')
     })
+
+    //////////////sequential going for buses page displaye the buses page
+
+
+    it('Now go for buses page', function() {
+
+        cy.visit('/buses')
+
+        cy.get('input[name=date]').type(new Date)
+        cy.get('input[name=departure]').type(Lahore)
+        cy.get('input[name=departure]').type(Islamabad)
+            // causes the form to submit
+        cy.get('input[value=Submit]').click();
+
+        // we should be redirected to /dashboard
+        cy.url().should('include', '/available_buses')
+            //   cy.getCookie('your-session-cookie').should('exist')
+
+        // UI should reflect this user being logged in
+        cy.get('title').should('contain', 'Bus Booking System')
+    })
+
+
+    //////  going for book ticket page display the book ticket page
+
+    it('Select Bus', function() {
+
+        /// cy.visit('/available_buses')
+
+
+    })
+
+    it('Payment', function() {
+
+        /// cy.visit('/available_buses')
+
+
+    })
+
 })
 
 
@@ -127,7 +161,7 @@ describe('The Login Page', () => {
 /////testing the UI of buses page whether busses page is visible or not
 describe('The Buses Page ', () => {
 
-    it('Login Successful', function() {
+    it('Now go for buses page', function() {
 
         cy.visit('/buses')
 
@@ -152,7 +186,7 @@ describe('The Buses Page ', () => {
 
     it('Login Successful', function() {
 
-        cy.visit('/buses')
+        cy.visit('/booking')
 
         cy.get('input[name=date]').type(new Date)
         cy.get('input[name=departure]').type(Lahore)
@@ -216,6 +250,27 @@ describe(`Buses Page`, () => {
         });
     });
 });
+
+
+describe2(`Buses Page`, () => {
+    describe(`when there is a proper response for buses`, () => {
+        beforeEach(() => {
+            cy.intercept('GET', '/api/buses/list', { fixture: 'buseslist.json' }).as('buses'); ////Our static api response
+            ///will come from buseslist.json
+            cy.visit('/busespage');
+            // We wait for the response
+            cy.wait('@buses');
+        });
+
+        it(`should display the available buses`, () => {
+            cy.get(`[data-test-id="1"]`) // we retrieve our mocked buses
+                .should('be.visible') // we assert it is visible 
+                .contains("1", "Niazi Expres");
+
+        });
+    });
+});
+
 
 
 /////complete end to end test for testing from watching buses to to booking ticket
