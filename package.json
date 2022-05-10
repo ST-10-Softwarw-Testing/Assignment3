@@ -1,6 +1,7 @@
 {
-  "devDependencies": {
-    "cypress": "^9.6.0",
-     "cypress:open": "cypress open"
-  }
+    "devDependencies": {
+        "cypress": "^9.6.0",
+        "cypress:open": "cypress open",
+        "start": "node your-script.js"
+    }
 }

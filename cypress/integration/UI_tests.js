@@ -27,7 +27,7 @@ describe('The Sign Up page', () => {
 
     it('Display Login', function(username, password) {
 
-        cy.visit('/Signup')
+        cy.visit('/signup')
 
         cy.get('input[name=username]').type(username)
 
@@ -37,13 +37,13 @@ describe('The Sign Up page', () => {
         cy.get('input[value=Submit]').click();
 
         // we should be redirected to /dashboard
-        cy.url().should('include', '/Login')
+        cy.url().should('include', '/login')
 
         //   // our auth cookie should be present
         //   cy.getCookie('your-session-cookie').should('exist')
 
         // UI should reflect this user being logged in
-        cy.get('title').should('contain', '/Login')
+        cy.get('title').should('contain', 'Testing App')
     })
 })
 
@@ -106,7 +106,7 @@ describe('The Login Page', () => {
 
     it('Login Successful', function(username, password) {
 
-        cy.visit('/Login')
+        cy.visit('/login')
 
         cy.get('input[name=username]').type(username)
 
@@ -124,4 +124,98 @@ describe('The Login Page', () => {
     })
 })
 
+/////testing the UI of buses page whether busses page is visible or not
+describe('The Buses Page ', () => {
+
+    it('Login Successful', function() {
+
+        cy.visit('/buses')
+
+        cy.get('input[name=date]').type(new Date)
+        cy.get('input[name=departure]').type(Lahore)
+        cy.get('input[name=departure]').type(Islamabad)
+            // causes the form to submit
+        cy.get('input[value=Submit]').click();
+
+        // we should be redirected to /dashboard
+        cy.url().should('include', '/available_buses')
+            //   cy.getCookie('your-session-cookie').should('exist')
+
+        // UI should reflect this user being logged in
+        cy.get('title').should('contain', 'Bus Booking System')
+    })
+})
+
+
+/////testing the UI of booking page whether selected buses can be booked
+describe('The Buses Page ', () => {
+
+    it('Login Successful', function() {
+
+        cy.visit('/buses')
+
+        cy.get('input[name=date]').type(new Date)
+        cy.get('input[name=departure]').type(Lahore)
+        cy.get('input[name=departure]').type(Islamabad)
+            // causes the form to submit
+        cy.get('input[value=Submit]').click();
+
+        // we should be redirected to /dashboard
+        cy.url().should('include', '/available_buses')
+            //   cy.getCookie('your-session-cookie').should('exist')
+
+        // UI should reflect this user being logged in
+        cy.get('title').should('contain', 'Bus Booking System')
+    })
+})
+
+
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+///UNIT TEST FOR TESTING WHEN BUS SERVICE IS NOT AVAILABE--------------------------------------------
+
+describe(`Buses Page`, () => {
+    describe(`Service is temporily suspended`, () => {
+        beforeEach(() => {
+            cy.intercept('GET', '/api/buses/list', { body: [] }).as('emptyList');
+            cy.visit('/busespage');
+            cy.wait('@emptyList');
+        });
+
+        it(`a message should be displayed`, () => {
+            cy.get(`[data-test-id="no delivery"]`)
+                .should('exist')
+                .and('be.visible')
+                .and('contain', 'Sorry, our service is temporly unavailable.');
+        });
+    });
+});
+
+
+
+
+///UNIT TEST FOR TESTING WHEN BUS SERVICE IS NOT AVAILABE plus adding static API TO GET DATA FOR TEST--------------------------------------------
+
+
+describe(`Buses Page`, () => {
+    describe(`when there is a proper response for buses`, () => {
+        beforeEach(() => {
+            cy.intercept('GET', '/api/buses/list', { fixture: 'buseslist.json' }).as('buses'); ////Our static api response
+            ///will come from buseslist.json
+            cy.visit('/busespage');
+            // We wait for the response
+            cy.wait('@buses');
+        });
+
+        it(`should display the available buses`, () => {
+            cy.get(`[data-test-id="1"]`) // we retrieve our mocked buses
+                .should('be.visible') // we assert it is visible 
+                .contains("1", "Niazi Expres");
+
+        });
+    });
+});
+
+
+/////complete end to end test for testing from watching buses to to booking ticket
