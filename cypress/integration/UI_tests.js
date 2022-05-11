@@ -243,7 +243,7 @@ describe(`Buses Page`, () => {
         });
 
         it(`should display the available buses`, () => {
-            cy.get(`[data-test-id="1"]`) // we retrieve our mocked buses
+            cy.get(`[data-test-id=""]`) // we retrieve our mocked buses
                 .should('be.visible') // we assert it is visible 
                 .contains("1", "Niazi Expres");
 
@@ -273,4 +273,75 @@ describe2(`Buses Page`, () => {
 
 
 
-/////complete end to end test for testing from watching buses to to booking ticket
+/////complete Unit test for testing Successful login
+
+it("succesful Signup", () => {
+    var actual = signup("36302-3497449-1", "zain", "0304-6437766", "zainabbaskhakhi123@gmail.com", "zaman@123");
+    assert.equal(1, actual);
+
+})
+
+it("Wrong Cnic pattern", () => {
+    var actual = signup("36302-3497449-11", "zain", "0304-6437766", "zainabbaskhakhi123@gmail.com", "zaman@123");
+    assert.equal(0, actual);
+})
+
+it("Singup_alphanumeric_phoneNo", () => {
+    var actual = signup("36302-3497449-1", "zain", "0304-64377abcd", "zainabbaskhakhi123@gmail.com", "zaman@123");
+    assert.equal(0, actual);
+})
+
+it("login Successful", () => {
+    var actual = login("36302-3497449-1", "zaman@123");
+    assert.equal(1, actual);
+})
+
+
+it("login with wrong CNIC", () => {
+    var actual = login("36302-3ab7449-1", "zaman@123");
+    assert.equal(0, actual);
+})
+
+
+it("Singin_greater_length_password", () => {
+    var actual = login("36302-3497449-1", "zaman@123sdhbchvern");
+    assert.equal(0, actual);
+})
+
+
+it("updating the user profile with correct values", () => {
+
+    var actual = updateprofile("36302-3497449-1", "zain@123", "zain@321");
+    assert.equal(1, actual);
+})
+
+
+it("updating the user profile with wrong cnic", () => {
+
+    var actual = updateprofile("36302-3497dc449-1", "12345", "12345566");
+    assert.equal(0, actual);
+})
+
+it("updating the user profile with greater length cnic", () => {
+
+    var actual = updateprofile("36302-3497449-13456", "12345", "123456");
+    assert.equal(0, actual);
+})
+
+it("updating the user profile by submitting wrong fromat password", () => {
+
+    var actual = updateprofile("36302-3497449-1", "12345zain466354534", "123457");
+    assert.equal(0, actual);
+})
+
+
+it("selecting correct payment method", () => {
+    var actual = payment_method("0316-6383977", "easypaisa");
+    assert.equal(1, actual);
+})
+
+
+it("selecting wrong payment method by entering wrong number", () => {
+    var actual = payment_method("0316-638abcd", "easypaisa");
+    assert.equal(0, actual);
+})
